@@ -116,6 +116,18 @@ trait SNUnitModule extends Common.Cross with Publish {
 //     }
 // }
 
+object `snunit-async-zio` extends Cross[SNUnitAsyncZioModule](scalaVersions) 
+trait SNUnitAsyncZioModule extends Common.Cross with Publish {
+  def moduleDeps = Seq(snunit())
+
+  def ivyDeps =
+    T {
+      super.ivyDeps() ++ Agg(
+        ivy"dev.zio::zio::${Versions.zio}"
+      )
+    }
+}
+
 object `snunit-undertow` extends Cross[SNUnitUndertow](scalaVersions)
 trait SNUnitUndertow extends Common.Cross with Publish {
   def moduleDeps = Seq(snunit())
@@ -136,6 +148,17 @@ trait SNUnitTapirModule extends Common.Cross with Publish {
 //     ivy"com.softwaremill.sttp.tapir::tapir-cats-effect::${Versions.tapir}"
 //   )
 // }
+
+object `snunit-tapir-zio` extends Cross[SNUnitTapirZio](scalaVersions)
+trait SNUnitTapirZio extends Common.Cross with Publish {
+  def moduleDeps = Seq(
+    `snunit-tapir`(),
+    `snunit-async-zio`()
+  )
+  def ivyDeps = super.ivyDeps() ++ Agg(
+    ivy"com.softwaremill.sttp.tapir::tapir-zio::${Versions.tapir}"
+  )
+}
 
 // object `snunit-http4s` extends Cross[SNUnitHttp4s](http4sAndScalaVersions)
 // trait SNUnitHttp4s extends Common.Cross with Cross.Module2[String, String] with Publish {
